@@ -1,5 +1,5 @@
 [DebugChecksum]
-Checksum=940730295
+Checksum=1718864379
 [Stack]
 FillEnabled=0
 OverflowWarningsEnabled=1
@@ -21,7 +21,7 @@ ShowTimeLog=1
 ShowTimeSum=1
 [Breakpoints]
 Bp0=_ "STD_CODE" "{$PROJ_DIR$\..\stm8s_it.c}.477.7" 1 0 0 0 "" 0 ""
-Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\main.c}.115.7" 1 0 0 0 "" 0 ""
+Bp1=_ "STD_CODE" "{$PROJ_DIR$\..\main.c}.132.7" 1 0 0 0 "" 0 ""
 Count=2
 [Log file]
 LoggingEnabled=_ 0

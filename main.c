@@ -61,16 +61,19 @@ void main(void)
    /* De-Init ADC1 peripheral */
   ADC1_DeInit();   
   
+   ADC1_DataBufferCmd(ENABLE);
+    ADC1_ScanModeCmd(ENABLE);
+  
   /* init */
   ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, 
-            ADC1_CHANNEL_2,
+            ADC1_CHANNEL_3,
             ADC1_PRESSEL_FCPU_D10, 
             ADC1_EXTTRIG_TIM, 
             DISABLE, 
             ADC1_ALIGN_RIGHT, 
-            ADC1_SCHMITTTRIG_CHANNEL2,
+            ADC1_SCHMITTTRIG_ALL,
             DISABLE);  
-  
+  /*
     ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, 
             ADC1_CHANNEL_3,
             ADC1_PRESSEL_FCPU_D10, 
@@ -79,14 +82,13 @@ void main(void)
             ADC1_ALIGN_RIGHT, 
             ADC1_SCHMITTTRIG_CHANNEL3,
             DISABLE); 
- 
+ */
     
 
     // ADC1_ExternalTriggerConfig(ADC1_EXTTRIG_TIM,ENABLE);
     // ADC1_ITConfig(ADC1_IT_EOCIE, ENABLE);
    
-    ADC1_DataBufferCmd(ENABLE);
-    ADC1_ScanModeCmd(ENABLE);
+   
    
    
     // enableInterrupts();
@@ -113,13 +115,13 @@ void main(void)
       
      
       
-      ADC1_ClearITPendingBit(ADC1_IT_AWS2);
-      ADC1_ClearITPendingBit(ADC1_IT_AWS3);
-      ADC1_ClearITPendingBit(ADC1_IT_EOC);
+      //ADC1_ClearITPendingBit(ADC1_IT_AWS2);
+      //ADC1_ClearITPendingBit(ADC1_IT_AWS3);
+      //ADC1_ClearITPendingBit(ADC1_IT_EOC);
       // ADC1_ClearITPendingBit(ADC1_IT_EOCIE);
-      ADC1_ClearFlag(ADC1_FLAG_EOC);
-      ADC1_ClearFlag(ADC1_FLAG_OVR);
-      ADC1_StartConversion();
+      //ADC1_ClearFlag(ADC1_FLAG_EOC);
+      //ADC1_ClearFlag(ADC1_FLAG_OVR);
+      //ADC1_StartConversion();
       
       
       

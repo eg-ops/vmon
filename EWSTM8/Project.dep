@@ -659,11 +659,15 @@
           <name>BICOMP</name>
           <file> 83</file>
         </tool>
+        <tool>
+          <name>ICCSTM8</name>
+          <file> 19</file>
+        </tool>
       </outputs>
       <inputs>
         <tool>
           <name>BICOMP</name>
-          <file> 28 95 47 52 21 54 5 32 26 31 90 81 53 50 57 37 98 44 49 100</file>
+          <file> 31 32 95 26 5 52 28 21 47 54 90 81 53 50 57 37 98 44 49 100</file>
         </tool>
         <tool>
           <name>ICCSTM8</name>
