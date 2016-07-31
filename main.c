@@ -33,6 +33,7 @@
 
 /* Private defines -----------------------------------------------------------*/
  unsigned int wValue = 0;
+unsigned int voltage;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -60,22 +61,23 @@ void main(void)
   
    /* De-Init ADC1 peripheral */
   ADC1_DeInit();   
-
-    ADC1_ScanModeCmd(ENABLE);
-    
-    ADC1_ConversionConfig(ADC1_CONVERSIONMODE_CONTINUOUS, ADC1_CHANNEL_3, ADC1_ALIGN_RIGHT);
-    ADC1_PrescalerConfig(ADC1_PRESSEL_FCPU_D10);
-    ADC1_ExternalTriggerConfig(ADC1_EXTTRIG_TIM, DISABLE);
-    ADC1_SchmittTriggerConfig(ADC1_SCHMITTTRIG_ALL, DISABLE);
-    ADC1_ITConfig(ADC1_IT_EOCIE, ENABLE);
-  //  ADC1_Cmd(ENABLE);   
-
+  
+   // ADC1_DataBufferCmd(ENABLE);
+  ADC1_ScanModeCmd(ENABLE);
+  ADC1_ITConfig(ADC1_IT_EOCIE, ENABLE);
+  ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, 
+            ADC1_CHANNEL_3,
+            ADC1_PRESSEL_FCPU_D10, 
+            ADC1_EXTTRIG_TIM, 
+            DISABLE, 
+            ADC1_ALIGN_RIGHT, 
+            ADC1_SCHMITTTRIG_ALL,
+            DISABLE);  
+            
     
     enableInterrupts();
-
-    ADC1_StartConversion(); 
-    
-    
+    ADC1_StartConversion();  
+     
       // TIM1_Cmd(ENABLE);
 
   volatile int counter = 0; 
@@ -85,10 +87,8 @@ void main(void)
   {
       counter++;
       
-     
-   }
   
-  
+  }
   
 }
 
