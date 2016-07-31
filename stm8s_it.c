@@ -42,6 +42,8 @@
 /* Private functions ---------------------------------------------------------*/
 /* Public functions ----------------------------------------------------------*/
 
+ extern unsigned int voltage;
+    
 #ifdef _COSMIC_
 /**
   * @brief Dummy Interrupt routine
@@ -279,6 +281,11 @@ INTERRUPT_HANDLER(TIM1_CAP_COM_IRQHandler, 12)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
+   TIM2_ClearITPendingBit(TIM2_IT_UPDATE);
+   if (voltage >  57){
+      GPIO_WriteReverse(GPIOA, GPIO_PIN_3);
+   }
+   
  }
 
 /**
@@ -452,7 +459,6 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
  }
 #else /* STM8S105 or STM8S103 or STM8S903 or STM8AF626x or STM8AF622x */
 
- extern unsigned int voltage;
 /**
   * @brief ADC1 interrupt routine.
   * @par Parameters:
@@ -473,27 +479,16 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
 
       volatile uint16_t val1 = ADC1_GetBufferValue(ADC1_CHANNEL_2);   // Read Channel 2
       volatile uint16_t val2 = ADC1_GetBufferValue(ADC1_CHANNEL_3); // Read Channel 3
-      /*volatile uint32_t*/ voltage = 248;
+      voltage = 248;
       
       voltage = voltage * val1;
       voltage = voltage / val2;
       
-      // ADC1_ClearITPendingBit(ADC1_IT_AWS2);
-      // ADC1_ClearITPendingBit(ADC1_IT_AWS3);
-     //  ADC1_ClearITPendingBit(ADC1_IT_EOC);
-      // ADC1_ClearITPendingBit(ADC1_IT_EOCIE);
-      // ADC1_ClearFlag(ADC1_FLAG_EOC);
-      // ADC1_ClearITPendingBit(ADC1_IT_EOC);
-      
-      ADC1->CSR = ADC1_IT_EOCIE | ADC1_CHANNEL_3;
+      ADC1->CSR = (uint8_t)(ADC1_IT_EOCIE) | (uint8_t)(ADC1_CHANNEL_3);
       
       if (ADC1_GetFlagStatus(ADC1_FLAG_OVR) == SET){
         ADC1_StartConversion();
       }
-      
-      
-      val1++;
-      val2++;
    }
  }
 #endif /* (STM8S208) || (STM8S207) || (STM8AF52Ax) || (STM8AF62Ax) */

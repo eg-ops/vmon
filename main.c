@@ -30,6 +30,7 @@
 #include "stm8s.h"
 #include "stm8s_gpio.h"
 #include "stm8s_adc1.h"
+#include "stm8s_tim2.h"
 
 /* Private defines -----------------------------------------------------------*/
  unsigned int wValue = 0;
@@ -58,6 +59,11 @@ void main(void)
    TIM1_TimeBaseInit(32 - 1, TIM1_COUNTERMODE_UP, 1250 - 1, 0);
    TIM1_SelectOutputTrigger(TIM1_TRGOSOURCE_UPDATE);
   */
+  TIM2_DeInit();
+  TIM2_TimeBaseInit(TIM2_PRESCALER_32768, 306*2); // 29297
+  // 29297/(16000000/32768) = 60,000256 sec
+  TIM2_ITConfig(TIM2_IT_UPDATE, ENABLE);
+  TIM2_Cmd(ENABLE);
   
    /* De-Init ADC1 peripheral */
   ADC1_DeInit();   
