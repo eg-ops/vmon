@@ -61,7 +61,7 @@ void main(void)
    /* De-Init ADC1 peripheral */
   ADC1_DeInit();   
   
-   ADC1_DataBufferCmd(ENABLE);
+   // ADC1_DataBufferCmd(ENABLE);
     ADC1_ScanModeCmd(ENABLE);
   
   /* init */
