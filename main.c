@@ -60,41 +60,22 @@ void main(void)
   
    /* De-Init ADC1 peripheral */
   ADC1_DeInit();   
-  
-   // ADC1_DataBufferCmd(ENABLE);
-    ADC1_ScanModeCmd(ENABLE);
-  
-  /* init */
-  ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, 
-            ADC1_CHANNEL_3,
-            ADC1_PRESSEL_FCPU_D10, 
-            ADC1_EXTTRIG_TIM, 
-            DISABLE, 
-            ADC1_ALIGN_RIGHT, 
-            ADC1_SCHMITTTRIG_ALL,
-            DISABLE);  
-  /*
-    ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, 
-            ADC1_CHANNEL_3,
-            ADC1_PRESSEL_FCPU_D10, 
-            ADC1_EXTTRIG_TIM, 
-            DISABLE, 
-            ADC1_ALIGN_RIGHT, 
-            ADC1_SCHMITTTRIG_CHANNEL3,
-            DISABLE); 
- */
-    
 
-    // ADC1_ExternalTriggerConfig(ADC1_EXTTRIG_TIM,ENABLE);
-    // ADC1_ITConfig(ADC1_IT_EOCIE, ENABLE);
-   
-   
-   
-   
-    // enableInterrupts();
-        
-    ADC1_StartConversion();       
-     
+    ADC1_ScanModeCmd(ENABLE);
+    
+    ADC1_ConversionConfig(ADC1_CONVERSIONMODE_CONTINUOUS, ADC1_CHANNEL_3, ADC1_ALIGN_RIGHT);
+    ADC1_PrescalerConfig(ADC1_PRESSEL_FCPU_D10);
+    ADC1_ExternalTriggerConfig(ADC1_EXTTRIG_TIM, DISABLE);
+    ADC1_SchmittTriggerConfig(ADC1_SCHMITTTRIG_ALL, DISABLE);
+    ADC1_ITConfig(ADC1_IT_EOCIE, ENABLE);
+  //  ADC1_Cmd(ENABLE);   
+
+    
+    enableInterrupts();
+
+    ADC1_StartConversion(); 
+    
+    
       // TIM1_Cmd(ENABLE);
 
   volatile int counter = 0; 
@@ -104,41 +85,10 @@ void main(void)
   {
       counter++;
       
-      if ( ADC1_GetFlagStatus(ADC1_FLAG_EOC) != RESET ) {
-
-      volatile uint16_t val1 = ADC1_GetBufferValue(ADC1_CHANNEL_2);   // Read Channel 2
-      volatile uint16_t val2 = ADC1_GetBufferValue(ADC1_CHANNEL_3); // Read Channel 3
-      volatile uint32_t voltage = 248;
-      
-      voltage = voltage * val1;
-      voltage = voltage / val2;
-      
-     
-      
-      //ADC1_ClearITPendingBit(ADC1_IT_AWS2);
-      //ADC1_ClearITPendingBit(ADC1_IT_AWS3);
-      //ADC1_ClearITPendingBit(ADC1_IT_EOC);
-      // ADC1_ClearITPendingBit(ADC1_IT_EOCIE);
-      //ADC1_ClearFlag(ADC1_FLAG_EOC);
-      //ADC1_ClearFlag(ADC1_FLAG_OVR);
-      //ADC1_StartConversion();
-      
-      
-      
-     
-      
-      
-      if (1){
-      val1++;
-      val2++;
-      voltage++;
-      }
-      
-      
      
    }
   
-  }
+  
   
 }
 

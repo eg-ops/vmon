@@ -467,6 +467,9 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
    
    if ( ADC1_GetFlagStatus(ADC1_FLAG_EOC) != RESET ) {
 
+      //ADC1_GetBufferValue(ADC1_CHANNEL_0);  
+      //ADC1_GetBufferValue(ADC1_CHANNEL_1); 
+
       volatile uint16_t val1 = ADC1_GetBufferValue(ADC1_CHANNEL_2);   // Read Channel 2
       volatile uint16_t val2 = ADC1_GetBufferValue(ADC1_CHANNEL_3); // Read Channel 3
       volatile uint32_t voltage = 248;
@@ -474,11 +477,11 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
       voltage = voltage * val1;
       voltage = voltage / val2;
       
-      ADC1_ClearITPendingBit(ADC1_IT_AWS2);
-      ADC1_ClearITPendingBit(ADC1_IT_AWS3);
+      // ADC1_ClearITPendingBit(ADC1_IT_AWS2);
+      // ADC1_ClearITPendingBit(ADC1_IT_AWS3);
      //  ADC1_ClearITPendingBit(ADC1_IT_EOC);
       // ADC1_ClearITPendingBit(ADC1_IT_EOCIE);
-      ADC1_ClearFlag(ADC1_FLAG_EOC);
+      // ADC1_ClearFlag(ADC1_FLAG_EOC);
       
       
       val1++;
