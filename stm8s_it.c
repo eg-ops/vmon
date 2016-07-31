@@ -42,7 +42,7 @@
 /* Private functions ---------------------------------------------------------*/
 /* Public functions ----------------------------------------------------------*/
 
- extern unsigned int voltage;
+ extern uint32_t voltage;
     
 #ifdef _COSMIC_
 /**

@@ -34,13 +34,12 @@
 
 /* Private defines -----------------------------------------------------------*/
  unsigned int wValue = 0;
-unsigned int voltage;
+uint32_t voltage;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
 void main(void)
 {
-  
   
   GPIO_DeInit(GPIOA);
   GPIO_DeInit(GPIOD);
@@ -60,7 +59,9 @@ void main(void)
    TIM1_SelectOutputTrigger(TIM1_TRGOSOURCE_UPDATE);
   */
   TIM2_DeInit();
-  TIM2_TimeBaseInit(TIM2_PRESCALER_32768, 306*2); // 29297
+  TIM2_TimeBaseInit(TIM2_PRESCALER_32768, 611); // 29297
+  TIM2_UpdateDisableConfig(DISABLE);
+  // TIM2_UpdateRequstConfig(TIM2_UPDATESOURCE_GLOBAL);
   // 29297/(16000000/32768) = 60,000256 sec
   TIM2_ITConfig(TIM2_IT_UPDATE, ENABLE);
   TIM2_Cmd(ENABLE);
