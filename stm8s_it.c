@@ -43,6 +43,10 @@
 /* Public functions ----------------------------------------------------------*/
 
  extern uint32_t voltage;
+ extern uint32_t index;
+ extern uint32_t tmp_voltage;
+ extern uint32_t time;
+
     
 #ifdef _COSMIC_
 /**
@@ -282,9 +286,7 @@ INTERRUPT_HANDLER(TIM1_CAP_COM_IRQHandler, 12)
      it is recommended to set a breakpoint on the following instruction.
   */
    TIM2_ClearITPendingBit(TIM2_IT_UPDATE);
-   if (voltage >  57){
-      GPIO_WriteReverse(GPIOA, GPIO_PIN_3);
-   }
+   time++;
    
  }
 
@@ -459,6 +461,8 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
  }
 #else /* STM8S105 or STM8S103 or STM8S903 or STM8AF626x or STM8AF622x */
 
+#define SAMPLES 32
+#define THRESHOLD 2940
 /**
   * @brief ADC1 interrupt routine.
   * @par Parameters:
@@ -477,12 +481,32 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
       ADC1_GetBufferValue(ADC1_CHANNEL_0);   // Read Channel 2
       ADC1_GetBufferValue(ADC1_CHANNEL_1); // Read Channel 3
 
-      volatile uint16_t val1 = ADC1_GetBufferValue(ADC1_CHANNEL_2);   // Read Channel 2
-      volatile uint16_t val2 = ADC1_GetBufferValue(ADC1_CHANNEL_3); // Read Channel 3
-      voltage = 248;
+      uint32_t val1 = (uint32_t)ADC1_GetBufferValue(ADC1_CHANNEL_2) * 10;   // Read Channel 2
+      uint32_t val2 = (uint32_t)ADC1_GetBufferValue(ADC1_CHANNEL_3) * 10; // Read Channel 3
       
-      voltage = voltage * val1;
-      voltage = voltage / val2;
+      tmp_voltage += (2480 * val1) / val2;
+      index++;
+      
+      
+      
+      if (index >= SAMPLES){
+        voltage = tmp_voltage / SAMPLES;
+        tmp_voltage = 0;
+        index = 0;
+        if (voltage < THRESHOLD){
+          // start timer
+          /*time = 0;
+          TIM2_SetCounter(0);
+          TIM2_Cmd(ENABLE);*/
+          
+          GPIO_WriteHigh(GPIOA, GPIO_PIN_3);
+  
+        } else {
+          // stop timer
+          //TIM2_Cmd(DISABLE);
+          GPIO_WriteLow(GPIOA, GPIO_PIN_3);
+        }
+      }
       
       ADC1->CSR = (uint8_t)(ADC1_IT_EOCIE) | (uint8_t)(ADC1_CHANNEL_3);
       

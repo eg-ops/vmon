@@ -33,13 +33,18 @@
 #include "stm8s_tim2.h"
 
 /* Private defines -----------------------------------------------------------*/
- unsigned int wValue = 0;
 uint32_t voltage;
+uint32_t index;
+uint32_t tmp_voltage;
+uint32_t time;
+
+
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
 void main(void)
 {
+  index = 0;
   
   GPIO_DeInit(GPIOA);
   GPIO_DeInit(GPIOD);
@@ -74,7 +79,7 @@ void main(void)
   ADC1_ITConfig(ADC1_IT_EOCIE, ENABLE);
   ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, 
             ADC1_CHANNEL_3,
-            ADC1_PRESSEL_FCPU_D10, 
+            ADC1_PRESSEL_FCPU_D4, 
             ADC1_EXTTRIG_TIM, 
             DISABLE, 
             ADC1_ALIGN_RIGHT, 
