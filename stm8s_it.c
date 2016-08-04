@@ -46,7 +46,7 @@
  extern uint32_t index;
  extern uint32_t tmp_voltage;
  extern uint32_t time;
-
+ extern uint32_t timer;
     
 #ifdef _COSMIC_
 /**
@@ -495,15 +495,19 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
         index = 0;
         if (voltage < THRESHOLD){
           // start timer
-          /*time = 0;
-          TIM2_SetCounter(0);
-          TIM2_Cmd(ENABLE);*/
-          
-          GPIO_WriteHigh(GPIOA, GPIO_PIN_3);
+          if (!timer){
+            timer = 1;
+            time = 0;
+            TIM2_SetCounter(0);
+            TIM2_Cmd(ENABLE);
+          } else if (time > 2){
+            GPIO_WriteHigh(GPIOA, GPIO_PIN_3);
+          }
   
         } else {
           // stop timer
-          //TIM2_Cmd(DISABLE);
+          timer = 0;
+          TIM2_Cmd(DISABLE);
           GPIO_WriteLow(GPIOA, GPIO_PIN_3);
         }
       }

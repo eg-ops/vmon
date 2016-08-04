@@ -37,6 +37,7 @@ uint32_t voltage;
 uint32_t index;
 uint32_t tmp_voltage;
 uint32_t time;
+uint32_t timer;
 
 
 /* Private function prototypes -----------------------------------------------*/
@@ -45,6 +46,7 @@ uint32_t time;
 void main(void)
 {
   index = 0;
+  timer = 0;
   
   GPIO_DeInit(GPIOA);
   GPIO_DeInit(GPIOD);
@@ -65,11 +67,12 @@ void main(void)
   */
   TIM2_DeInit();
   TIM2_TimeBaseInit(TIM2_PRESCALER_32768, 611); // 29297
+    // 611/(2000000/32768) = 10 sec
   TIM2_UpdateDisableConfig(DISABLE);
   // TIM2_UpdateRequstConfig(TIM2_UPDATESOURCE_GLOBAL);
   // 29297/(16000000/32768) = 60,000256 sec
   TIM2_ITConfig(TIM2_IT_UPDATE, ENABLE);
-  TIM2_Cmd(ENABLE);
+  // TIM2_Cmd(ENABLE);
   
    /* De-Init ADC1 peripheral */
   ADC1_DeInit();   
