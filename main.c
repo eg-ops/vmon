@@ -49,10 +49,22 @@ void main(void)
   timer = 0;
   
   GPIO_DeInit(GPIOA);
-  GPIO_DeInit(GPIOD);
+  GPIO_DeInit(GPIOB);
   GPIO_DeInit(GPIOC);
+  GPIO_DeInit(GPIOD);
   
-  GPIO_Init(GPIOA, GPIO_PIN_3, GPIO_MODE_OUT_PP_HIGH_FAST);
+  GPIO_Init(GPIOB, GPIO_PIN_4, GPIO_MODE_OUT_PP_LOW_FAST);
+  
+  GPIO_Init(GPIOB, GPIO_PIN_5, GPIO_MODE_OUT_PP_LOW_FAST);
+  
+  
+  GPIO_WriteHigh(GPIOB, GPIO_PIN_5);
+  //GPIO_WriteLow(GPIOB, GPIO_PIN_5);
+  
+  GPIO_WriteHigh(GPIOB, GPIO_PIN_4);
+  //GPIO_WriteLow(GPIOB, GPIO_PIN_4);
+  
+  GPIO_Init(GPIOA, GPIO_PIN_3, GPIO_MODE_OUT_PP_HIGH_SLOW);
   
   GPIO_WriteHigh(GPIOA, GPIO_PIN_3);
   GPIO_WriteLow(GPIOA, GPIO_PIN_3);
@@ -60,24 +72,16 @@ void main(void)
   GPIO_Init(GPIOD, GPIO_PIN_2, GPIO_MODE_IN_FL_NO_IT); // ref AIN3
   GPIO_Init(GPIOC, GPIO_PIN_4, GPIO_MODE_IN_FL_NO_IT); // vol AIN2
 
-  /*
-   TIM1_DeInit();
-   TIM1_TimeBaseInit(32 - 1, TIM1_COUNTERMODE_UP, 1250 - 1, 0);
-   TIM1_SelectOutputTrigger(TIM1_TRGOSOURCE_UPDATE);
-  */
   TIM2_DeInit();
   TIM2_TimeBaseInit(TIM2_PRESCALER_32768, 611); // 29297
     // 611/(2000000/32768) = 10 sec
-  TIM2_UpdateDisableConfig(DISABLE);
-  // TIM2_UpdateRequstConfig(TIM2_UPDATESOURCE_GLOBAL);
   // 29297/(16000000/32768) = 60,000256 sec
+
+  TIM2_UpdateDisableConfig(DISABLE);
   TIM2_ITConfig(TIM2_IT_UPDATE, ENABLE);
-  // TIM2_Cmd(ENABLE);
   
    /* De-Init ADC1 peripheral */
   ADC1_DeInit();   
-  
-   // ADC1_DataBufferCmd(ENABLE);
   ADC1_ScanModeCmd(ENABLE);
   ADC1_ITConfig(ADC1_IT_EOCIE, ENABLE);
   ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, 
@@ -92,17 +96,10 @@ void main(void)
     
     enableInterrupts();
     ADC1_StartConversion();  
-     
-      // TIM1_Cmd(ENABLE);
 
-  volatile int counter = 0; 
-  
   /* Infinite loop */
   while (1)
   {
-      counter++;
-      
-  
   }
   
 }

@@ -36,6 +36,10 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
+
+#define CONTROL_PORT GPIOB
+#define CONTROL_PIN GPIO_PIN_4
+
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -47,6 +51,8 @@
  extern uint32_t tmp_voltage;
  extern uint32_t time;
  extern uint32_t timer;
+ 
+ 
     
 #ifdef _COSMIC_
 /**
@@ -462,7 +468,8 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
 #else /* STM8S105 or STM8S103 or STM8S903 or STM8AF626x or STM8AF622x */
 
 #define SAMPLES 32
-#define THRESHOLD 2940
+#define VOLTAGE_THRESHOLD 2940
+#define TIMER_THRESHOLD 60 
 /**
   * @brief ADC1 interrupt routine.
   * @par Parameters:
@@ -493,22 +500,24 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
         voltage = tmp_voltage / SAMPLES;
         tmp_voltage = 0;
         index = 0;
-        if (voltage < THRESHOLD){
+        if (voltage < VOLTAGE_THRESHOLD ){
           // start timer
           if (!timer){
             timer = 1;
             time = 0;
             TIM2_SetCounter(0);
             TIM2_Cmd(ENABLE);
-          } else if (time > 2){
-            GPIO_WriteHigh(GPIOA, GPIO_PIN_3);
+          } else if (time > TIMER_THRESHOLD){
+            timer = 0;
+            TIM2_Cmd(DISABLE);
+            GPIO_WriteHigh(CONTROL_PORT, CONTROL_PIN);
           }
   
         } else {
           // stop timer
           timer = 0;
           TIM2_Cmd(DISABLE);
-          GPIO_WriteLow(GPIOA, GPIO_PIN_3);
+          GPIO_WriteLow(CONTROL_PORT, CONTROL_PIN);
         }
       }
       
