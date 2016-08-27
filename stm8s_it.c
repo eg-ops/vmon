@@ -469,7 +469,7 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
 
 #define SAMPLES 32
 #define VOLTAGE_THRESHOLD 2940
-#define TIMER_THRESHOLD 60 
+#define TIMER_THRESHOLD 2 //60 // 2 = 20 sec 
 /**
   * @brief ADC1 interrupt routine.
   * @par Parameters:
@@ -494,9 +494,14 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
       tmp_voltage += (2480 * val1) / val2;
       index++;
       
-      
+      if (index >= 4){
+        IWDG_ReloadCounter();
+      }
       
       if (index >= SAMPLES){
+        
+        
+        
         voltage = tmp_voltage / SAMPLES;
         tmp_voltage = 0;
         index = 0;

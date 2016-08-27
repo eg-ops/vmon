@@ -40,6 +40,9 @@ uint32_t time;
 uint32_t timer;
 
 
+#define CONTROL_PORT GPIOB
+#define CONTROL_PIN GPIO_PIN_4
+
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -53,22 +56,43 @@ void main(void)
   GPIO_DeInit(GPIOC);
   GPIO_DeInit(GPIOD);
   
-  GPIO_Init(GPIOB, GPIO_PIN_4, GPIO_MODE_OUT_PP_LOW_FAST);
   
-  GPIO_Init(GPIOB, GPIO_PIN_5, GPIO_MODE_OUT_PP_LOW_FAST);
+  GPIO_Init(CONTROL_PORT, CONTROL_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
+  GPIO_Init(GPIOB, GPIO_PIN_5, GPIO_MODE_OUT_PP_LOW_SLOW);
+  while(1){
+    
+    volatile int i = 0xFFFF;
+    GPIO_WriteLow(CONTROL_PORT, CONTROL_PIN); 
+    GPIO_WriteLow(GPIOB, GPIO_PIN_5); // led
+    while(i--){
+     
+    };
+    GPIO_WriteHigh(CONTROL_PORT, CONTROL_PIN); 
+    GPIO_WriteHigh(GPIOB, GPIO_PIN_5); 
   
+  }
   
-  GPIO_WriteHigh(GPIOB, GPIO_PIN_5);
-  //GPIO_WriteLow(GPIOB, GPIO_PIN_5);
+  return;
   
-  GPIO_WriteHigh(GPIOB, GPIO_PIN_4);
-  //GPIO_WriteLow(GPIOB, GPIO_PIN_4);
+  GPIO_Init(CONTROL_PORT, CONTROL_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
+  GPIO_Init(GPIOB, GPIO_PIN_5, GPIO_MODE_OUT_PP_LOW_SLOW);
+ 
+  if (RST_GetFlagStatus(RST_FLAG_WWDGF) == SET){
+    //TODO delay
+    RST_ClearFlag(RST_FLAG_WWDGF);
+    
+  }
   
-  GPIO_Init(GPIOA, GPIO_PIN_3, GPIO_MODE_OUT_PP_HIGH_SLOW);
+  int i = 0xFFFF;
+  GPIO_WriteLow(GPIOB, GPIO_PIN_5); // led
+  while(i--){
+   
+  };
+  GPIO_WriteHigh(GPIOB, GPIO_PIN_5); // led
   
-  GPIO_WriteHigh(GPIOA, GPIO_PIN_3);
-  GPIO_WriteLow(GPIOA, GPIO_PIN_3);
-  
+  GPIO_WriteHigh(CONTROL_PORT, CONTROL_PIN); // mosfet control
+  //GPIO_WriteLow(CONTROL_PORT, CONTROL_PIN);
+    
   GPIO_Init(GPIOD, GPIO_PIN_2, GPIO_MODE_IN_FL_NO_IT); // ref AIN3
   GPIO_Init(GPIOC, GPIO_PIN_4, GPIO_MODE_IN_FL_NO_IT); // vol AIN2
 
@@ -96,6 +120,13 @@ void main(void)
     
     enableInterrupts();
     ADC1_StartConversion();  
+    
+    IWDG_SetPrescaler(IWDG_Prescaler_256);
+    IWDG_SetReload(0xFF);
+    IWDG_WriteAccessCmd(IWDG_WriteAccess_Disable);
+    IWDG_Enable();
+    
+    // halt();
 
   /* Infinite loop */
   while (1)
