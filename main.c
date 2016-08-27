@@ -61,7 +61,7 @@ void main(void)
   GPIO_Init(GPIOB, GPIO_PIN_5, GPIO_MODE_OUT_PP_LOW_SLOW);
   while(1){
     
-    volatile int i = 0xFFFF;
+    volatile uint32_t i = 0x2FFF;
     GPIO_WriteLow(CONTROL_PORT, CONTROL_PIN); 
     GPIO_WriteLow(GPIOB, GPIO_PIN_5); // led
     while(i--){
@@ -69,69 +69,14 @@ void main(void)
     };
     GPIO_WriteHigh(CONTROL_PORT, CONTROL_PIN); 
     GPIO_WriteHigh(GPIOB, GPIO_PIN_5); 
-  
+     i = 0x2FFF;
+    while(i--){
+     
+    };
   }
   
   return;
-  
-  GPIO_Init(CONTROL_PORT, CONTROL_PIN, GPIO_MODE_OUT_PP_HIGH_FAST);
-  GPIO_Init(GPIOB, GPIO_PIN_5, GPIO_MODE_OUT_PP_LOW_SLOW);
  
-  if (RST_GetFlagStatus(RST_FLAG_WWDGF) == SET){
-    //TODO delay
-    RST_ClearFlag(RST_FLAG_WWDGF);
-    
-  }
-  
-  int i = 0xFFFF;
-  GPIO_WriteLow(GPIOB, GPIO_PIN_5); // led
-  while(i--){
-   
-  };
-  GPIO_WriteHigh(GPIOB, GPIO_PIN_5); // led
-  
-  GPIO_WriteHigh(CONTROL_PORT, CONTROL_PIN); // mosfet control
-  //GPIO_WriteLow(CONTROL_PORT, CONTROL_PIN);
-    
-  GPIO_Init(GPIOD, GPIO_PIN_2, GPIO_MODE_IN_FL_NO_IT); // ref AIN3
-  GPIO_Init(GPIOC, GPIO_PIN_4, GPIO_MODE_IN_FL_NO_IT); // vol AIN2
-
-  TIM2_DeInit();
-  TIM2_TimeBaseInit(TIM2_PRESCALER_32768, 611); // 29297
-    // 611/(2000000/32768) = 10 sec
-  // 29297/(16000000/32768) = 60,000256 sec
-
-  TIM2_UpdateDisableConfig(DISABLE);
-  TIM2_ITConfig(TIM2_IT_UPDATE, ENABLE);
-  
-   /* De-Init ADC1 peripheral */
-  ADC1_DeInit();   
-  ADC1_ScanModeCmd(ENABLE);
-  ADC1_ITConfig(ADC1_IT_EOCIE, ENABLE);
-  ADC1_Init(ADC1_CONVERSIONMODE_CONTINUOUS, 
-            ADC1_CHANNEL_3,
-            ADC1_PRESSEL_FCPU_D4, 
-            ADC1_EXTTRIG_TIM, 
-            DISABLE, 
-            ADC1_ALIGN_RIGHT, 
-            ADC1_SCHMITTTRIG_ALL,
-            DISABLE);  
-            
-    
-    enableInterrupts();
-    ADC1_StartConversion();  
-    
-    IWDG_SetPrescaler(IWDG_Prescaler_256);
-    IWDG_SetReload(0xFF);
-    IWDG_WriteAccessCmd(IWDG_WriteAccess_Disable);
-    IWDG_Enable();
-    
-    // halt();
-
-  /* Infinite loop */
-  while (1)
-  {
-  }
   
 }
 
