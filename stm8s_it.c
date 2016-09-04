@@ -515,7 +515,7 @@ void led_signal(uint32_t timer){
         index = 0;
         if (voltage > VOLTAGE_THRESHOLD ){
           // stop timer
-          if (timer == 0){
+          if (timer){
             timer = 0;
             TIM2_Cmd(DISABLE);
           }
