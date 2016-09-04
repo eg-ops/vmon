@@ -468,8 +468,8 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
 #else /* STM8S105 or STM8S103 or STM8S903 or STM8AF626x or STM8AF622x */
 
 #define SAMPLES 32
-#define VOLTAGE_THRESHOLD 2940
-#define TIMER_THRESHOLD 2 //60 // 2 = 20 sec 
+#define VOLTAGE_THRESHOLD  3000 // 2940 // 2867
+#define TIMER_THRESHOLD 4 //60 // 2 = 20 sec 
 /**
   * @brief ADC1 interrupt routine.
   * @par Parameters:
@@ -491,7 +491,7 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
       uint32_t val1 = (uint32_t)ADC1_GetBufferValue(ADC1_CHANNEL_2) * 10;   // Read Channel 2
       uint32_t val2 = (uint32_t)ADC1_GetBufferValue(ADC1_CHANNEL_3) * 10; // Read Channel 3
       
-      tmp_voltage += (2480 * val1) / val2;
+      tmp_voltage += (2500 * val1) / val2;
       index++;
       
       if (index >= 4){

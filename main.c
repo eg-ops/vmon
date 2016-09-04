@@ -31,6 +31,7 @@
 #include "stm8s_gpio.h"
 #include "stm8s_adc1.h"
 #include "stm8s_tim2.h"
+#include "stm8s_tim4.h"
 
 /* Private defines -----------------------------------------------------------*/
 uint32_t voltage;
@@ -48,6 +49,12 @@ uint32_t timer;
 
 void main(void)
 {
+  
+  IWDG_SetPrescaler(IWDG_Prescaler_256);
+  IWDG_SetReload(0xFF);
+  IWDG_WriteAccessCmd(IWDG_WriteAccess_Disable);
+  IWDG_Enable();
+  
   index = 0;
   timer = 0;
   
@@ -65,10 +72,15 @@ void main(void)
     
   }
   
-  int i = 0xFFFF;
+  TIM4_DeInit();
+  TIM4_TimeBaseInit(TIM4_PRESCALER_128, 0xFF);
+  TIM4_SelectOnePulseMode(TIM4_OPMODE_SINGLE);
+  TIM4_Cmd(ENABLE);
+  
+  int i = 0x2FFF;
   GPIO_WriteLow(GPIOB, GPIO_PIN_5); // led
   while(i--){
-   
+   IWDG_ReloadCounter();
   };
   GPIO_WriteHigh(GPIOB, GPIO_PIN_5); // led
   
@@ -103,10 +115,7 @@ void main(void)
     enableInterrupts();
     ADC1_StartConversion();  
     
-    IWDG_SetPrescaler(IWDG_Prescaler_256);
-    IWDG_SetReload(0xFF);
-    IWDG_WriteAccessCmd(IWDG_WriteAccess_Disable);
-    IWDG_Enable();
+    
     
     // halt();
 
