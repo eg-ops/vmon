@@ -39,6 +39,8 @@ uint32_t index;
 uint32_t tmp_voltage;
 uint32_t time;
 uint32_t timer;
+uint32_t led_timer;
+uint32_t voltage_ok;
 
 
 #define CONTROL_PORT GPIOB
@@ -57,6 +59,7 @@ void main(void)
   
   index = 0;
   timer = 0;
+  voltage_ok = 0;
   
   GPIO_DeInit(GPIOA);
   GPIO_DeInit(GPIOB);
@@ -72,17 +75,14 @@ void main(void)
     
   }
   
+  enableInterrupts();
+  
   TIM4_DeInit();
   TIM4_TimeBaseInit(TIM4_PRESCALER_128, 0xFF);
-  TIM4_SelectOnePulseMode(TIM4_OPMODE_SINGLE);
+  TIM4_ITConfig(TIM4_IT_UPDATE, ENABLE);
+  GPIO_WriteLow(GPIOB, GPIO_PIN_5);
+  led_timer = 15;
   TIM4_Cmd(ENABLE);
-  
-  int i = 0x2FFF;
-  GPIO_WriteLow(GPIOB, GPIO_PIN_5); // led
-  while(i--){
-   IWDG_ReloadCounter();
-  };
-  GPIO_WriteHigh(GPIOB, GPIO_PIN_5); // led
   
   GPIO_WriteHigh(CONTROL_PORT, CONTROL_PIN); // mosfet control
   //GPIO_WriteLow(CONTROL_PORT, CONTROL_PIN);
@@ -110,10 +110,8 @@ void main(void)
             ADC1_ALIGN_RIGHT, 
             ADC1_SCHMITTTRIG_ALL,
             DISABLE);  
-            
     
-    enableInterrupts();
-    ADC1_StartConversion();  
+   ADC1_StartConversion();  
     
     
     

@@ -51,7 +51,8 @@
  extern uint32_t tmp_voltage;
  extern uint32_t time;
  extern uint32_t timer;
- 
+ extern uint32_t led_timer;
+ extern uint32_t voltage_ok;
  
     
 #ifdef _COSMIC_
@@ -467,6 +468,13 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
  }
 #else /* STM8S105 or STM8S103 or STM8S903 or STM8AF626x or STM8AF622x */
 
+
+void led_signal(uint32_t timer){
+  led_timer = timer;
+  GPIO_WriteLow(GPIOB, GPIO_PIN_5);
+  TIM4_Cmd(ENABLE);
+}
+
 #define SAMPLES 32
 #define VOLTAGE_THRESHOLD  3000 // 2940 // 2867
 #define TIMER_THRESHOLD 4 //60 // 2 = 20 sec 
@@ -505,24 +513,34 @@ INTERRUPT_HANDLER(I2C_IRQHandler, 19)
         voltage = tmp_voltage / SAMPLES;
         tmp_voltage = 0;
         index = 0;
-        if (voltage < VOLTAGE_THRESHOLD ){
+        if (voltage > VOLTAGE_THRESHOLD ){
+          // stop timer
+          if (timer == 0){
+            timer = 0;
+            TIM2_Cmd(DISABLE);
+          }
+
+          GPIO_WriteLow(CONTROL_PORT, CONTROL_PIN);
+          if (voltage_ok == 0){
+            led_signal(20);
+            voltage_ok = 1;
+          }
+          
+        } else {
+          
           // start timer
-          if (!timer){
+          if (timer == 0 && GPIO_ReadInputPin(CONTROL_PORT, CONTROL_PIN) == RESET){
             timer = 1;
             time = 0;
             TIM2_SetCounter(0);
             TIM2_Cmd(ENABLE);
-          } else if (time > TIMER_THRESHOLD){
+            led_signal(30);
+          } else if (timer && time > TIMER_THRESHOLD){
+            voltage_ok = 0;
             timer = 0;
             TIM2_Cmd(DISABLE);
             GPIO_WriteHigh(CONTROL_PORT, CONTROL_PIN);
           }
-  
-        } else {
-          // stop timer
-          timer = 0;
-          TIM2_Cmd(DISABLE);
-          GPIO_WriteLow(CONTROL_PORT, CONTROL_PIN);
         }
       }
       
@@ -558,6 +576,13 @@ INTERRUPT_HANDLER(TIM6_UPD_OVF_TRG_IRQHandler, 23)
   /* In order to detect unexpected events during development,
      it is recommended to set a breakpoint on the following instruction.
   */
+   
+   if (!(led_timer--)){
+     GPIO_WriteHigh(GPIOB, GPIO_PIN_5); // led
+     TIM4_Cmd(DISABLE);
+   }
+   TIM4_ClearITPendingBit(TIM4_IT_UPDATE);
+
  }
 #endif /* (STM8S903) || (STM8AF622x)*/
 
